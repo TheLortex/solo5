@@ -30,7 +30,7 @@ ELFTOOL := $(TOPDIR)/elftool/solo5-elftool
 # and exercise solo5-config.sh in the process.
 CC := $(shell $(SOLO5_CONFIG) --cc)
 LD := $(shell $(SOLO5_CONFIG) --ld)
-CFLAGS := $(shell $(SOLO5_CONFIG) --toolchain=static --cflags)
+CFLAGS := $(shell $(SOLO5_CONFIG) --cflags)
 CFLAGS += -std=c11 -Wall -Werror -O2 -g
 
 # As a test is currently a single source file, we don't try to do any

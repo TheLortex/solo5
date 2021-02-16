@@ -34,7 +34,7 @@ CFLAGS := $(MAKECONF_CFLAGS) -std=c11 -Wall -Wextra -Werror -O2 -g
 CPPFLAGS := -isystem $(TOPDIR)/include/crt -I$(TOPDIR)/include
 LD := $(MAKECONF_LD)
 LDFLAGS := $(MAKECONF_LDFLAGS)
-OBJCOPY := objcopy
+OBJCOPY := $(MAKECONF_OBJCOPY)
 
 # Also used by the HOST_ rules below.
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
@@ -77,4 +77,32 @@ endef
 define HOSTLINK
 	@echo "HOSTLINK $@"
 	$(HOSTCC) $(HOSTLDFLAGS) $^ $(HOSTLDLIBS) -o $@
+endef
+
+#
+# The following variables and recpies apply to building tools, i.e.
+# artifacts built to run on the current *host*.
+#
+TOOLCC := $(MAKECONF_HOST_CC)
+TOOLCFLAGS := -fstack-protector-strong -Wall -Werror -std=c11 -O2 -g
+TOOLCPPFLAGS := -I$(TOPDIR)/include
+TOOLLDFLAGS :=
+TOOLLDLIBS :=
+TOOLAR := ar
+
+define TOOLCOMPILE.c
+	@echo "TOOLCC $@"
+	$(TOOLCC) $(DEPFLAGS) $(TOOLCFLAGS) $(TOOLCPPFLAGS) -c $< -o $@
+	mv -f $*.Td $*.d && touch $@
+endef
+
+define TOOLCOMPILE.S
+	@echo "TOOLAS $@"
+	$(TOOLCC) $(DEPFLAGS) $(TOOLCFLAGS) $(TOOLCPPFLAGS) -DASM_FILE -c $< -o $@
+	mv -f $*.Td $*.d && touch $@
+endef
+
+define TOOLLINK
+	@echo "TOOLLINK $@"
+	$(TOOLCC) $(TOOLLDFLAGS) $^ $(TOOLLDLIBS) -o $@
 endef

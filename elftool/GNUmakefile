@@ -29,10 +29,10 @@ all_TARGETS :=
 $(V).SILENT:	
 
 %.o: %.c %.d
-	$(HOSTCOMPILE.c)
+	$(TOOLCOMPILE.c)
 
 %.o: %.S %.d
-	$(HOSTCOMPILE.S)
+	$(TOOLCOMPILE.S)
 
 %.d: ;
 .PRECIOUS: %.d
@@ -43,7 +43,7 @@ elftool_OBJS := $(patsubst %.c,%.o,$(elftool_SRCS))
 all_TARGETS += solo5-elftool
 
 solo5-elftool: $(elftool_OBJS)
-	$(HOSTLINK)
+	$(TOOLLINK)
 
 all: $(all_TARGETS)
 
