@@ -453,6 +453,7 @@ echo "${prog_NAME}: Using ${TARGET_OBJCOPY} for target objcopy"
 # CONFIG_LDFLAGS="${CONFIG_LDFLAGS} -nopie"
 
 CONFIG_TARGET_SPEC="${CONFIG_TARGET_ARCH}-solo5-none-static"
+TARGET_CFLAGS="-static"
 CONFIG_TARGET_CLANG="${CONFIG_TARGET_ARCH}-unknown-none"
 echo "${prog_NAME}: Target toolchain spec is ${CONFIG_TARGET_SPEC}"
 
@@ -496,7 +497,7 @@ I="\$(dirname \$0)/../include"
 [ ! -d "\${I}" ] && echo "\$0: Could not determine include path" 1>&2 && exit 1
 [ -n "\${__V}" ] && set -x
 exec ${TARGET_CC} \
-    --target=${CONFIG_TARGET_CLANG} \
+    ${TARGET_CFLAGS} \
     -nostdlibinc -isystem \${I}/${CONFIG_TARGET_SPEC} -I \${I}/solo5 \
     -ffreestanding \
     -fstack-protector-strong \
