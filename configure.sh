@@ -329,7 +329,7 @@ if [ "${CONFIG_HOST}" = "FreeBSD" -a -n "${CONFIG_HVT_TENDER}" ]; then
 fi
 
 [ -z "${OPT_TARGET}" ] && OPT_TARGET=${CONFIG_HOST_ARCH}
-TARGET_CC="${TARGET_CC:-clang} --target=${OPT_TARGET}-unknown-none"
+TARGET_CC="${TARGET_CC:-clang} --target=${OPT_TARGET}-none-elf"
 
 echo -n "${prog_NAME}: Checking that ${TARGET_CC} works: "
 cat >conftmp.c <<EOM
