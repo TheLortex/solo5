@@ -496,9 +496,29 @@ cat >"${T}/${CONFIG_TARGET_SPEC}-cc" <<EOM
 I="\$(dirname \$0)/../include"
 [ ! -d "\${I}" ] && echo "\$0: Could not determine include path" 1>&2 && exit 1
 [ -n "\${__V}" ] && set -x
+L="\$(dirname \$0)/../lib/x86_64-solo5-none-static"
+[ ! -d "\${L}" ] && echo "\$0: Could not determine library path" 1>&2 && exit 1
+LINKING=true
+B=
+for arg do
+    shift
+    case "\$arg" in
+        --solo5-abi=*)
+            B="\${arg##*=}"
+            continue
+        ;;
+        -c)
+            LINKING=false
+        ;;
+    esac
+    set -- "\$@" "\$arg"
+done
+[ -n "\${B}" ] && B="-T solo5_\${B}.lds -l :solo5_\${B}.o"
+[ "\${LINKING}" = true ] && LINKARGS="-L \${L}  \${B}"
 exec ${TARGET_CC} \
     ${TARGET_CFLAGS} \
     -isystem \${I}/${CONFIG_TARGET_SPEC} -I \${I}/solo5 \
+    \${LINKARGS} \
     -ffreestanding \
     -fstack-protector-strong \
     "\$@"
