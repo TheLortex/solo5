@@ -453,7 +453,6 @@ echo "${prog_NAME}: Using ${TARGET_OBJCOPY} for target objcopy"
 # CONFIG_LDFLAGS="${CONFIG_LDFLAGS} -nopie"
 
 CONFIG_TARGET_SPEC="${CONFIG_TARGET_ARCH}-solo5-none-static"
-TARGET_CFLAGS="-static"
 CONFIG_TARGET_CLANG="${CONFIG_TARGET_ARCH}-unknown-none"
 echo "${prog_NAME}: Target toolchain spec is ${CONFIG_TARGET_SPEC}"
 
@@ -496,9 +495,10 @@ cat >"${T}/${CONFIG_TARGET_SPEC}-cc" <<EOM
 I="\$(dirname \$0)/../include"
 [ ! -d "\${I}" ] && echo "\$0: Could not determine include path" 1>&2 && exit 1
 [ -n "\${__V}" ] && set -x
-L="\$(dirname \$0)/../lib/x86_64-solo5-none-static"
+L="\$(dirname \$0)/../lib/${CONFIG_TARGET_SPEC}"
 [ ! -d "\${L}" ] && echo "\$0: Could not determine library path" 1>&2 && exit 1
 LINKING=true
+ASM=false
 B=
 for arg do
     shift
@@ -510,17 +510,21 @@ for arg do
         -c)
             LINKING=false
         ;;
+        *.s|*.S)
+            ASM=true
+        ;;
     esac
     set -- "\$@" "\$arg"
 done
 [ -n "\${B}" ] && B="-T solo5_\${B}.lds -l :solo5_\${B}.o"
-[ "\${LINKING}" = true ] && LINKARGS="-L \${L}  \${B}"
+LDFLAGS=
+CFLAGS=
+[ "\${LINKING}" = true ] && LDFLAGS="-L \${L}  \${B}"
+[ "\${LINKING}" = false ] && [ "\${ASM}" = false ] && CFLAGS="-isystem \${I}/x86_64-solo5-none-static -nostdlibinc -ffreestanding -fstack-protector-strong"
 exec ${TARGET_CC} \
-    ${TARGET_CFLAGS} \
-    -isystem \${I}/${CONFIG_TARGET_SPEC} -I \${I}/solo5 \
-    \${LINKARGS} \
-    -ffreestanding \
-    -fstack-protector-strong \
+    -static \
+    -I \${I}/solo5 \
+    \${LDFLAGS} \${CFLAGS}  \
     "\$@"
 EOM
 chmod +x "${T}/${CONFIG_TARGET_SPEC}-cc"
