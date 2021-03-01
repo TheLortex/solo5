@@ -498,7 +498,7 @@ I="\$(dirname \$0)/../include"
 [ -n "\${__V}" ] && set -x
 exec ${TARGET_CC} \
     ${TARGET_CFLAGS} \
-    -nostdlibinc -isystem \${I}/${CONFIG_TARGET_SPEC} -I \${I}/solo5 \
+    -isystem \${I}/${CONFIG_TARGET_SPEC} -I \${I}/solo5 \
     -ffreestanding \
     -fstack-protector-strong \
     "\$@"
