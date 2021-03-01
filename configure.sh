@@ -522,7 +522,7 @@ CFLAGS=
 [ "\${LINKING}" = true ] && LDFLAGS="-L \${L}  \${B}"
 [ "\${LINKING}" = false ] && [ "\${ASM}" = false ] && CFLAGS="-isystem \${I}/x86_64-solo5-none-static -nostdlibinc -ffreestanding -fstack-protector-strong"
 exec ${TARGET_CC} \
-    -static \
+    -static -Wno-asm-operand-widths \
     -I \${I}/solo5 \
     \${LDFLAGS} \${CFLAGS}  \
     "\$@"
