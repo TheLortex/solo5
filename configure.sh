@@ -432,7 +432,7 @@ case ${HOST_CC_MACHINE} in
         TARGET_EXTRA_CFLAGS="-nostdinc"
 
         if [ "${CONFIG_TARGET_ARCH}" = "x86_64" ] || [ "${CONFIG_TARGET_ARCH}" = "ppc64le" ]; then
-            gcc_check_option -mstack-protector-guard=global || \
+            CC="${TARGET_CC}" gcc_check_option -mstack-protector-guard=global || \
                 die "GCC 4.9.0 or newer is required for -mstack-protector-guard= support"
             TARGET_EXTRA_CFLAGS="${TARGET_EXTRA_CFLAGS} -mstack-protector-guard=global"
         fi
