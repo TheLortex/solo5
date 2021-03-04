@@ -110,6 +110,16 @@ int main(int argc, char *argv[])
 EOM
 }
 
+gcc_check_option()
+{
+    ${CC} "$@" -x c -c -o /dev/null - <<EOM >/dev/null 2>&1
+int main(int argc, char *argv[])
+{
+    return 0;
+}
+EOM
+}
+
 ld_is_lld()
 {
     ${LD} --version 2>&1 | grep -q '^LLD'
@@ -419,7 +429,13 @@ case ${HOST_CC_MACHINE} in
         [ -d "${CC_INCDIR}" ] || die "Cannot determine gcc include directory"
         cp -R "${CC_INCDIR}/." ${CRT_INCDIR}
         # XXX
-        TARGET_EXTRA_CFLAGS="-nostdinc -mstack-protector-guard=global"
+        TARGET_EXTRA_CFLAGS="-nostdinc"
+
+        if [ "${CONFIG_TARGET_ARCH}" = "x86_64" ] || [ "${CONFIG_TARGET_ARCH}" = "ppc64le" ]; then
+            gcc_check_option -mstack-protector-guard=global || \
+                die "GCC 4.9.0 or newer is required for -mstack-protector-guard= support"
+            TARGET_EXTRA_CFLAGS="${TARGET_EXTRA_CFLAGS} -mstack-protector-guard=global"
+        fi
         ;;
     *freebsd*|*openbsd*)
         CC="${TARGET_CC}" cc_is_clang || die "Only clang is supported on *BSD"
