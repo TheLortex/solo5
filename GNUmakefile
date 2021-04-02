@@ -118,6 +118,7 @@ install-headers: build
 
 TOOLCHAIN_INCDIR := $(D)/include/$(CONFIG_TARGET_TRIPLE)
 TOOLCHAIN_LIBDIR := $(D)/lib/$(CONFIG_TARGET_TRIPLE)
+PKGCONFIG_DIR 	 := $(D)/lib/pkgconfig
 
 .PHONY: install-toolchain
 install-toolchain: MAKECMDGOALS :=
@@ -127,11 +128,12 @@ install-toolchain: build
 	$(INSTALL) -m 0755 toolchain/bin/$(CONFIG_TARGET_TRIPLE)-cc $(D)/bin
 	$(INSTALL) -m 0755 toolchain/bin/$(CONFIG_TARGET_TRIPLE)-ld $(D)/bin
 	$(INSTALL) -m 0755 toolchain/bin/$(CONFIG_TARGET_TRIPLE)-objcopy $(D)/bin
-	mkdir -p $(TOOLCHAIN_INCDIR) $(TOOLCHAIN_LIBDIR)
+	mkdir -p $(TOOLCHAIN_INCDIR) $(TOOLCHAIN_LIBDIR) $(PKGCONFIG_DIR)
 	cd toolchain/include/$(CONFIG_TARGET_TRIPLE) && \
 	    find . -type d -exec mkdir -p "$(TOOLCHAIN_INCDIR)/{}" \; && \
 	    find . -type f -name '*.h' -exec $(INSTALL) -m 0644 \
 	    "{}" "$(TOOLCHAIN_INCDIR)/{}" \;
+	$(INSTALL) -m 0644 toolchain/lib/pkgconfig/$(CONFIG_TARGET_TRIPLE).pc $(PKGCONFIG_DIR)
 	$(INSTALL) -m 0644 bindings/solo5_stub.o $(TOOLCHAIN_LIBDIR)
 	$(INSTALL) -m 0644 bindings/solo5_stub.lds $(TOOLCHAIN_LIBDIR)
 ifdef CONFIG_HVT

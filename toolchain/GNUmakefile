@@ -28,7 +28,8 @@ all_TARGETS := bin/$(CONFIG_TARGET_TRIPLE)-cc \
     bin/$(CONFIG_TARGET_TRIPLE)-objcopy \
     include/solo5 \
     include/$(CONFIG_TARGET_TRIPLE) \
-    lib/$(CONFIG_TARGET_TRIPLE)
+    lib/$(CONFIG_TARGET_TRIPLE) \
+	lib/pkgconfig/$(CONFIG_TARGET_TRIPLE).pc
 
 .SUFFIXES:
 $(V).SILENT:
@@ -65,6 +66,14 @@ lib:
 
 lib/$(CONFIG_TARGET_TRIPLE): | lib
 	ln -s $(TOPDIR)/bindings $@
+
+lib/pkgconfig/$(CONFIG_TARGET_TRIPLE).%: %.in | lib
+	mkdir -p lib/pkgconfig
+	@echo "SUBST $@"
+	sed -e 's!@@CONFIG_TARGET_TRIPLE@@!$(CONFIG_TARGET_TRIPLE)!g' \
+	    -e 's!@@CONFIG_TARGET_CC@@!$(CONFIG_TARGET_CC)!g' \
+	    -e 's!@@CONFIG_TARGET_CC_CFLAGS@@!$(CONFIG_TARGET_CC_CFLAGS)!g' \
+	    $< >$@
 
 all: $(all_TARGETS)
 
