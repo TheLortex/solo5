@@ -6,4 +6,4 @@ Name: @@CONFIG_TARGET_TRIPLE@@
 Version: 0.7.0
 Url: https://github.com/Solo5/solo5
 Description: Solo5 toolchain
-Cflags: @@CONFIG_TARGET_CC_CFLAGS@@ -isystem ${include}/@@CONFIG_TARGET_TRIPLE@@ -I ${include}/solo5 -ffreestanding -fstack-protector-strong
+Cflags: @@CONFIG_TARGET_CC_CFLAGS@@ -isystem ${include}/@@CONFIG_TARGET_TRIPLE@@ -I${include}/solo5 -ffreestanding -fstack-protector-strong
